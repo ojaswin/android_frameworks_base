@@ -16121,6 +16121,7 @@ package android.media {
     method public void setRingerMode(int);
     method public deprecated void setRouting(int, int, int);
     method public void setSpeakerphoneOn(boolean);
+    method public void setStreamMaxVolume(int, int);
     method public deprecated void setStreamMute(int, boolean);
     method public deprecated void setStreamSolo(int, boolean);
     method public void setStreamVolume(int, int, int);
