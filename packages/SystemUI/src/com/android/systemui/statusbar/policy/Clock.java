@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.UserHandle;
-import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
@@ -54,41 +53,11 @@ public class Clock extends TextView implements DemoMode {
     private SimpleDateFormat mClockFormat;
     private Locale mLocale;
 
-    private static final int TIME_ONE_SECOND    = 999;
-
     public static final int AM_PM_STYLE_NORMAL  = 0;
     public static final int AM_PM_STYLE_SMALL   = 1;
     public static final int AM_PM_STYLE_GONE    = 2;
 
     private int mAmPmStyle = AM_PM_STYLE_GONE;
-
-    public static final int CLOCK_SECONDS_GONE = 0;
-    public static final int CLOCK_SECONDS_VISIBLE = 1;
-
-    protected int mClockSeconds = CLOCK_SECONDS_GONE;
-
-    private SettingsObserver mSettingsObserver;
-
-    protected class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-         
-         void observe() {
-             ContentResolver resolver = mContext.getContentResolver();
-             resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.CLOCK_USE_SECOND), false,
-                    this, UserHandle.USER_ALL);
-
-        updateSettings();
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            updateSettings();
-        }
-    }
-
 
     public Clock(Context context) {
         this(context, null);
@@ -156,9 +125,7 @@ public class Clock extends TextView implements DemoMode {
                     mClockFormatString = ""; // force refresh
                 }
             }
-            if (mClockSeconds == CLOCK_SECONDS_GONE) {
-                 updateClock();
-             }
+            updateClock();
         }
     };
 
@@ -178,9 +145,6 @@ public class Clock extends TextView implements DemoMode {
 
         SimpleDateFormat sdf;
         String format = is24 ? d.timeFormat_Hm : d.timeFormat_hm;
-        if (mClockSeconds == CLOCK_SECONDS_VISIBLE) {
-             format = format.replaceFirst("mm","mm:ss");
-        }
         if (!format.equals(mClockFormatString)) {
             /*
              * Search for an unquoted "a" in the format string, so we can
@@ -241,21 +205,7 @@ public class Clock extends TextView implements DemoMode {
 
         return result;
 
-     protected void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-
-        mClockFormatString = "";
-
-        mClockSeconds = Settings.System.getIntForUser(resolver,
-                Settings.System.CLOCK_USE_SECOND, CLOCK_SECONDS_GONE,
-                UserHandle.USER_CURRENT);
-        if (mClockSeconds == CLOCK_SECONDS_VISIBLE) {
-                mSecondsHandler.postDelayed(mRunnable, TIME_ONE_SECOND);
-        } else {
-                clearHandlerCallbacks();
-        }
-        updateClock();
-      }
+    }
 
     private boolean mDemoMode;
 
@@ -291,31 +241,6 @@ public class Clock extends TextView implements DemoMode {
         mAmPmStyle = style;
         mClockFormatString = "";
         updateClock();
-    }
-
-    private Handler mSecondsHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            clearHandlerCallbacks();
-            if(mClockSeconds == CLOCK_SECONDS_VISIBLE) {
-                mSecondsHandler.postDelayed(mRunnable, TIME_ONE_SECOND);
-            }
-            updateClock();
-        }
-    };
-
-    private Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(mClockSeconds == CLOCK_SECONDS_VISIBLE) {
-                mSecondsHandler.sendEmptyMessage(0);
-            }
-        }
-    };
-
-    private void clearHandlerCallbacks() {
-        mSecondsHandler.removeCallbacks(mRunnable);
-        mSecondsHandler.removeMessages(0);
     }
 }
 

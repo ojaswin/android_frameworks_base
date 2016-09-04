@@ -3455,12 +3455,6 @@ public final class Settings {
         public static final String GESTURES_LONG_PRESS = "gestures_long_press";
 
         /**
-          * Display second in the Clock
-          * @hide
-          */
-         public static final String CLOCK_USE_SECOND = "clock_use_second";
-
-        /**
          * double tap Action
          *
          * @hide
