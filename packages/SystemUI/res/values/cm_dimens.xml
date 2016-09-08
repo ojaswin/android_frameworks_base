@@ -39,6 +39,11 @@
     <!-- Padding end for weather text -->
     <dimen name="status_bar_weather_padding_end">16dp</dimen>
 
+    <!-- Network traffic monitor single-line text size -->
+    <dimen name="net_traffic_single_text_size">8dp</dimen>
+    <!-- Network traffic monitor multi-line text size -->
+    <dimen name="net_traffic_multi_text_size">8dp</dimen>
+
     <!-- height of the qs page indicator -->
     <dimen name="qs_panel_page_indicator_height">8dp</dimen>
 
