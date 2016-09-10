@@ -14,11 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">    
-
-     <style name="TextAppearance.StatusBar.Traffic" parent="@*android:style/TextAppearance.StatusBar.Icon">
-        <item name="android:textStyle">bold|italic</item>
-    </style>
+<resources>
 
     <style name="SettingRow">
         <item name="android:layout_width">match_parent</item>
