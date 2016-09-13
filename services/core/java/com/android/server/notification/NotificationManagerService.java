@@ -24,6 +24,7 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
+import android.annotation.Nullable;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.AppGlobals;
@@ -63,6 +64,9 @@ import android.media.AudioManager;
 import android.media.AudioManagerInternal;
 import android.media.AudioSystem;
 import android.media.IRingtonePlayer;
+import android.media.session.MediaController;
+import android.media.session.MediaSessionManager;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -1089,27 +1093,8 @@ public class NotificationManagerService extends SystemService {
             updateNotificationPulse();
 
             mDisableDuckingWhileMedia = CMSettings.Global.getInt(resolver,
-                    CMSettings.Global.ZEN_DISABLE_DUCKING_DURING_MEDIA_PLAYBACK, 0) == 1;
+                    Settings.Global.ZEN_DISABLE_DUCKING_DURING_MEDIA_PLAYBACK, 0) == 1;
             updateDisableDucking();
-        }
-    }
-
-    private BroadcastReceiver mMediaSessionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateForActiveSessions();
-        }
-    };
-
-    private void updateForActiveSessions() {
-        CMAudioManager manager = CMAudioManager.getInstance(getContext());
-        List<AudioSessionInfo> sessions = manager.listAudioSessions(AudioManager.STREAM_MUSIC);
-        mActiveMedia = false;
-        for (AudioSessionInfo sessionInfo : sessions) {
-            if (sessionInfo.getSessionId() > 0) {
-                mActiveMedia = true;
-                break;
-            }
         }
     }
 
@@ -1136,16 +1121,11 @@ public class NotificationManagerService extends SystemService {
          if (!mSystemReady) {
              return;
          }
-         try {
-            getContext().unregisterReceiver(mMediaSessionReceiver);
-        } catch (IllegalArgumentException e) {
-            // Never registered
-        }
+         final MediaSessionManager mediaSessionManager = (MediaSessionManager) getContext()
+                 .getSystemService(Context.MEDIA_SESSION_SERVICE);
+         mediaSessionManager.removeOnActiveSessionsChangedListener(mSessionListener);
          if (mDisableDuckingWhileMedia) {
-            updateForActiveSessions();
-            IntentFilter intentFilter = new IntentFilter(CMAudioManager
-                    .ACTION_AUDIO_SESSIONS_CHANGED);
-            getContext().registerReceiver(mMediaSessionReceiver, intentFilter);
+            mediaSessionManager.addOnActiveSessionsChangedListener(mSessionListener, null);
         }
      }
 
