@@ -254,16 +254,6 @@
     <!-- CellularTile data sim not configured state string -->
     <string name="data_sim_not_configured">No data SIM</string>
 
-    <!-- Expanded desktop tile -->
-    <string name="quick_settings_expanded_desktop_label">Expanded desktop</string>
-    <string name="quick_settings_expanded_desktop">Expanded</string>
-    <string name="quick_settings_expanded_desktop_off">Normal</string>
-    <string name="quick_settings_expanded_desktop_detail_title">Expanded desktop mode</string>
-    <string name="quick_settings_expanded_hide_status">Hide status bar</string>
-    <string name="quick_settings_expanded_hide_navigation">Hide navigation bar</string>
-    <string name="quick_settings_expanded_hide_both">Hide both</string>
-    <string name="accessibility_quick_settings_expanded_desktop_off">Expanded desktop disabled</string>
-
     <!-- Content description of the dock battery level icon for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_dock_battery_level">Dock battery <xliff:g id="number">%d</xliff:g> percent.</string>
 
